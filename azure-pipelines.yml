@@ -10,17 +10,30 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'MyFirstAzurePipeline'
+    organization: 'jayaojha'
+    scannerMode: 'Other'
+    extraProperties: |
+      # Additional properties that will be passed to the scanner,
+      # Put one key=value per line, example:
+      # sonar.exclusions=**/*.bin
+      sonar.projectKey=jayaojha_MyFirstAzurePipeline
+      sonar.projectName=MyFirstAzurePipeline
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
-    mavenOptions: '-Xmx3072m'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '11'
-    jdkArchitectureOption: 'x64'
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    goals: 'package'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '11'
+    mavenVersionOption: 'Default'
+    mavenOptions: '-Xmx3072m'
+    mavenAuthenticateFeed: false
+    effectivePomSkip: false
+    sonarQubeRunAnalysis: true
+    sqMavenPluginVersionChoice: 'latest'
 - task: SonarCloudPublish@1
   inputs:
     pollingTimeoutSec: '300'
